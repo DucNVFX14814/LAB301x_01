@@ -61,7 +61,23 @@ DoVeSo/
 > không cần tải thủ công. Nếu môi trường không có Internet, tải trực tiếp tại
 > https://dev.mysql.com/downloads/connector/j/ rồi thêm vào `WEB-INF/lib`.
 
-## 4. Ghi chú tổ chức mã nguồn
+## 4. Unit test (JUnit 5)
+
+- Vị trí: `src/test/java/com/doveso/dao/impl/` - test cho toàn bộ 7 lớp DAO (`UserDAOImpl`,
+  `CompanyDAOImpl`, `TicketDAOImpl`, `LotteryPrizeDAOImpl`, `LotteryHistoryDAOImpl`,
+  `LotteryPrizeConfigDAOImpl`, `NumberStatDAOImpl`).
+- Đây là **integration test**: chạy trực tiếp trên CSDL MySQL thật (đọc cấu hình từ
+  `src/main/resources/db.properties`, giống lúc chạy app), không dùng mock/DB giả lập.
+  Vì vậy MySQL phải đang chạy và đã có CSDL `doveso_db` (đã tạo theo mục 3) trước khi chạy test.
+- Mỗi test tự tạo dữ liệu riêng (email/SĐT/mã công ty có hậu tố ngẫu nhiên, ngày quay số ở rất xa
+  tương lai) và tự xoá lại trong `@AfterEach` - không đụng đến dữ liệu thật đang có trong CSDL.
+- Chạy toàn bộ test: `mvn test`. Chạy trong IDE: click phải vào thư mục `src/test/java` → Run Tests,
+  hoặc mở từng file `*Test.java` và bấm nút Run cạnh từng hàm test.
+- Do đây là integration test cần DB thật, `mvn clean package` (build ra file .war) cũng sẽ chạy các
+  test này trước khi đóng gói; nếu MySQL chưa bật, lệnh build sẽ báo lỗi. Muốn build mà bỏ qua test:
+  `mvn clean package -DskipTests`.
+
+## 5. Ghi chú tổ chức mã nguồn
 
 - Tuân theo mô hình MVC: JSP (View) → Servlet (Controller) → DAO (Model/Data).
 - Toàn bộ JSP đặt trong `WEB-INF/views` để bắt buộc đi qua Servlet, không truy cập trực tiếp.
